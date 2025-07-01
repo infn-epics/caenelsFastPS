@@ -36,7 +36,7 @@ CaenelsFastPS_SRCS_vxWorks += -nil-
 
 # Finally link to the EPICS Base libraries
 CaenelsFastPS_LIBS += $(EPICS_BASE_IOC_LIBS)
-
+DATA += ../../protocols/fastps.proto
 #===========================
 
 include $(TOP)/configure/RULES
