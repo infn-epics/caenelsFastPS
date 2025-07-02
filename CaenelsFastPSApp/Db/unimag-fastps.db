@@ -11,6 +11,13 @@ alias("$(P)$(R)OutputVoltage","$(P)$(R)voltage_rb")
 alias("$(P)$(R)Current","$(P)$(R)current")
 alias("$(P)$(R)Voltage","$(P)$(R)voltage")
 
+record(event, "$(P)$(R):unimagscan")
+{
+  field(SCAN, "1 second")
+  field(VAL,  "$(P)$(R)unimagscan")
+  field(PINI, "YES")
+
+}
 
 
 # Extract status bits from StatusLSB
@@ -18,36 +25,48 @@ record(calcout, "$(P)$(R)SupplyOn") {
     field(DESC, "Supply On bit")
     field(INPA, "$(P)$(R)StatusLSB")
     field(CALC, "A & 0x1")
+    field(SCAN, "Event")
+    field(EVNT, "$(P)$(R)unimagscan")
 }
 
 record(calcout, "$(P)$(R)GenericFault") {
     field(DESC, "Generic Fault bit")
     field(INPA, "$(P)$(R)StatusLSB")
     field(CALC, "(A >> 1) & 0x1")
+    field(SCAN, "Event")
+    field(EVNT, "$(P)$(R)unimagscan")
 }
 
 record(calcout, "$(P)$(R)FETovertemp") {
     field(DESC, "FET Overtemp bit")
     field(INPA, "$(P)$(R)StatusLSB")
     field(CALC, "(A >> 2) & 0x1")
+    field(SCAN, "Event")
+    field(EVNT, "$(P)$(R)unimagscan")
 }
 
 record(calcout, "$(P)$(R)ShuntOvertemp") {
     field(DESC, "Shunt Overtemp bit")
     field(INPA, "$(P)$(R)StatusLSB")
     field(CALC, "(A >> 3) & 0x1")
+    field(SCAN, "Event")
+    field(EVNT, "$(P)$(R)unimagscan")
 }
 
 record(calcout, "$(P)$(R)DCunderV") {
     field(DESC, "DC Under Voltage bit")
     field(INPA, "$(P)$(R)StatusLSB")
     field(CALC, "(A >> 4) & 0x1")
+    field(SCAN, "Event")
+    field(EVNT, "$(P)$(R)unimagscan")
 }
 
 record(calcout, "$(P)$(R)ExternalInterlock1") {
     field(DESC, "External Interlock 1 bit")
     field(INPA, "$(P)$(R)StatusLSB")
     field(CALC, "(A >> 5) & 0x1")
+    field(SCAN, "Event")
+    field(EVNT, "$(P)$(R)unimagscan")
 }
 
 # State calculation (same logic as unimag.db)
