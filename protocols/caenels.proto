@@ -1,0 +1,128 @@
+
+OutTerminator = CR;
+InTerminator = CR LF;
+
+getModel {
+    out "VER";
+    in "#VER:%s\_%*s";
+    @init  {
+        out "VER";
+        in "#VER:%s\_%*s"
+    }
+}
+
+getLimits {
+    separator=":";
+
+    out "MLIMITS:?";
+    in "#MLIMITS:%f";
+
+    @init {
+        out "MLIMITS:?";
+        in "#MLIMITS:%f";
+        # in "#MLIMITS:%(\$1Voltage.LOPR)f%(\$2Voltage.HOPR)f%(\$3Current.LOPR)f%(\$4Current.HOPR)f";
+    }
+}
+
+getMinV {
+    out "MLIMITS:?";
+    in "#MLIMITS:%f:%*s";
+}
+
+getMaxV {
+    out "MLIMITS:?";
+    in "#MLIMITS:%*f:%f%*s";
+}
+
+getMinI {
+    out "MLIMITS:?";
+    in "#MLIMITS:%*f:%*f:%f%*s";
+}
+
+getMaxI {
+    out "MLIMITS:?";
+    in "#MLIMITS:%*f:%*f:%*f:%f";
+}
+
+getVersion {
+    out "VER";
+    in "#VER:%*s\_%*[^:]:%s";
+    @init {
+        out "VER";
+        in "#VER:%*s\_%*[^:]:%s";
+    };
+}
+
+################################################################################
+
+setEnable {
+    out "%{MOFF|MON}";
+    in "#AK";
+}
+
+setRegulationMode {
+    out "LOOP:%{V|I}";
+    in "#AK";
+    @init {
+        out "LOOP:?";
+        in "#LOOP:%{V|I}";
+    };
+}
+
+# the commands are MWV (go to setpt without ramp) and MWVR (ramp)
+setVoltage {
+    out "MWV%(\$1RampEnable){|R}:%f";
+    in "#AK";
+}
+
+# the commands are MWI (go to setpt without ramp) and MWIR (ramp)
+setCurrent {
+    out "MWI%(\$1RampEnable){|R}:%f";
+    in "#AK";
+}
+
+resetStatus {
+    out "MRESET";
+    in "#AK";
+}
+
+################################################################################
+
+getOutputVoltage {
+    out "MRV";
+    in "#MRV:%f";
+}
+
+getOutputCurrent {
+    out "MRI";
+    in "#MRI:%f";
+}
+
+getGroundCurrent {
+    out "MGC";
+    in "#MGC:%f";
+}
+
+getDCLinkVoltage {
+    out "MRP";
+    in "#MRP:%f";
+}
+
+getTemperature {
+    out "MRT";
+    in "#MRT:%f";
+}
+
+getStatusMSB {
+    out "MST";
+    in "#MST:%4x%*4x";
+}
+
+getStatusLSB {
+    out "MST";
+    in "#MST:%*4x%4x";
+    @init {
+        out "MST";
+        in "#MST:%*4x%4x";
+    }
+}

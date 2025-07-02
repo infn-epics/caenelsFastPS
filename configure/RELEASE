@@ -21,5 +21,5 @@
 EPICS_BASE=/epics/epics-base/
 SUPPORT=/epics/support/
 ASYN=$(SUPPORT)/asyn
-STREAM=$(SUPPORT)/StreamDevice
+STREAMDEVICE=$(SUPPORT)/StreamDevice
 
