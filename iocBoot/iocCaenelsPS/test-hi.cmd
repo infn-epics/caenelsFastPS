@@ -17,8 +17,8 @@ CaenelsPS_registerRecordDeviceDriver(pdbbase)
 drvAsynIPPortConfigure("L0","192.168.0.9:10001",0,0,0)
 
 ## Load record instances
-dbLoadRecords("db/caenels-hs.db", "P=$(P),R=$(R),PORT=L0")
-dbLoadRecords("db/unimag-caenels.db", "P=$(P),R=$(R),PORT=L0")
+dbLoadRecords("db/caenels-hs.db", "P=$(P),R=$(R),PORT=L0,RANGE=30")
+dbLoadRecords("db/unimag-histar.db", "P=$(P),R=$(R),PORT=L0")
 
 cd "${TOP}/iocBoot/${IOC}"
 iocInit()
