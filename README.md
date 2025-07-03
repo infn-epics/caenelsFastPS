@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/CAENels/EPICS-CaenelsFastPS.svg?branch=master)](https://travis-ci.org/CAENels/EPICS-CaenelsFastPS)
 
 
-EPICS IOC for CAENels FAST-PS
+EPICS IOC for CAENels FAST-PS & HI-STAR
 =============================
 
 This is an EPICS IOC for CAENels power supplies:
