@@ -1,4 +1,4 @@
-#!../../bin/EPICS
+#!../../bin/linux-x86_64/CaenelsFastPS
 
 < envPaths
 
