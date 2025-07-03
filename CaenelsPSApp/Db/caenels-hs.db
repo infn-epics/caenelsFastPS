@@ -1,56 +1,47 @@
 
-record(bo, "$(P)$(R)RegulationMode")
+record(event, "$(P)$(R):readbackevent")
 {
-    field(DESC, "Selects between voltage/current reg")
-    field(DTYP, "stream")
-    field(OUT,  "@caenels-hs.proto setRegulationMode $(PORT)")
-    field(ZNAM, "V")
-    field(ONAM, "I")
+  field(SCAN, "1 second")
+  field(VAL,  "$(P)$(R)readbackscan")
+  field(PINI, "YES")
+}
+record (ai, "$(P)$(R)Range")
+{
+    field(DESC, "Range")
+
+    field(PINI,  "YES")
+    field(VAL,$(RANGE=30))
+    field(FLNK, "$(P)$(R)CalcFanout")
+}
+record(fanout, "$(P)$(R)CalcFanout")
+{
+    field(LNK1, "$(P)$(R)LimitMinI_")
+    field(LNK2, "$(P)$(R)LimitMinOutputI_")
+    field(LNK3, "$(P)$(R)LimitMaxI_")
+    field(LNK4, "$(P)$(R)LimitMaxOutputCurrent_")
 }
 
-record(ao, "$(P)$(R)Voltage")
-{
-    field(DESC, "Voltage control (in V reg mode)")
-    field(DTYP, "stream")
-    field(EGU,  "V")
-    field(OUT,  "@caenels-hs.proto setVoltage($(P)$(R)) $(PORT)")
-    field(PREC, "5")
-}
 
-record(ao, "$(P)$(R)Current")
-{
-    field(DESC, "Current control (in V reg mode)")
-    field(DTYP, "stream")
-    field(EGU,  "A")
-    field(OUT,  "@caenels-hs.proto setCurrent($(P)$(R)) $(PORT)")
-    field(PREC, "5")
-}
 
-record(bo, "$(P)$(R)StatusReset")
-{
-    field(DESC, "Reset status register/clear faults")
-    field(DTYP, "stream")
-    field(OUT,  "@caenels-hs.proto resetStatus $(PORT)")
-}
 
-record(bo, "$(P)$(R)RampEnable")
+record (stringin, "$(P)$(R)Model")
 {
-    field(DESC, "Enables/disables ramping to setpoint")
-    field(ZNAM, "Off")
-    field(ONAM, "On")
-    field(DOL,  "0")
+    field(DESC, "Model")
+    field(DTYP, "stream")
+    field(INP,  "@caenels-hs.proto getModel $(PORT)")
     field(PINI, "YES")
+    field(FLNK, "$(P)$(R)Version")
 }
 
-################################################################################
-record(bi, "$(P)$(R)ReadbackPoll_")
+record (stringin, "$(P)$(R)Version")
 {
-    field(DESC, "Head of readback chain")
-    field(FLNK, "$(P)$(R)OutputVoltage")
-    field(PINI, "YES")
-    field(INP,  "0")
-    field(SCAN, "1 second")
+    field(DESC, "Version")
+    field(DTYP, "stream")
+    field(INP,  "@caenels-hs.proto getVersion $(PORT)")
+    field(FLNK, "$(P)$(R)_EnableInit")
 }
+
+#### Readback chain
 
 record(ai, "$(P)$(R)OutputVoltage")
 {
@@ -60,8 +51,11 @@ record(ai, "$(P)$(R)OutputVoltage")
     field(FLNK, "$(P)$(R)OutputCurrent")
     field(INP,  "@caenels-hs.proto getOutputVoltage $(PORT)")
     field(PREC, "5")
-}
+    field(SCAN, "Event")
 
+    field(EVNT, "$(P)$(R)readbackscan")
+
+}
 record(ai, "$(P)$(R)OutputCurrent")
 {
     field(DESC, "Output current")
@@ -70,7 +64,10 @@ record(ai, "$(P)$(R)OutputCurrent")
     field(FLNK, "$(P)$(R)GroundCurrent")
     field(INP,  "@caenels-hs.proto getOutputCurrent $(PORT)")
     field(PREC, "5")
+
 }
+
+
 
 record(ai, "$(P)$(R)GroundCurrent")
 {
@@ -80,6 +77,7 @@ record(ai, "$(P)$(R)GroundCurrent")
     field(FLNK, "$(P)$(R)DCLinkVoltage")
     field(INP,  "@caenels-hs.proto getGroundCurrent $(PORT)")
     field(PREC, "3")
+
 }
 
 record(ai, "$(P)$(R)DCLinkVoltage")
@@ -114,160 +112,46 @@ record(mbbiDirect, "$(P)$(R)StatusLSB")
 {
     field(DESC, "Status LSB")
     field(DTYP, "stream")
-    field(FLNK, "$(P)$(R)Limits")
     field(INP,  "@caenels-hs.proto getStatusLSB $(PORT)")
 }
+######### SET POINTS
 
-record (aai, "$(P)$(R)Limits")
+record(ao, "$(P)$(R)Current")
 {
-    field(DESC, "Limits")
-    field(DTYP, "stream")
-
-    field(FTVL, "FLOAT")
-    field(NELM, "4")
-    field(INP,  "@caenels-hs.proto getLimits $(PORT)")
-    field(FLNK, "$(P)$(R)LimitMinV")
-}
-
-record (ai, "$(P)$(R)LimitMinV")
-{
-    field(DESC, "Low limit of voltage")
-    field(DTYP, "stream")
-    field(EGU,  "V")
-    field(FLNK, "$(P)$(R)LimitMaxV")
-    field(INP, "@caenels-hs.proto getMinV $(PORT)")
-}
-
-record (ai, "$(P)$(R)LimitMaxV")
-{
-    field(DESC, "High limit of voltage")
-    field(DTYP, "stream")
-    field(EGU,  "V")
-    field(FLNK, "$(P)$(R)LimitMinI")
-    field(INP, "@caenels-hs.proto getMaxV $(PORT)")
-}
-
-record (ai, "$(P)$(R)LimitMinI")
-{
-    field(DESC, "Low limit of current")
+    field(DESC, "Current control (in V reg mode)")
     field(DTYP, "stream")
     field(EGU,  "A")
-    field(FLNK, "$(P)$(R)LimitMaxI")
-    field(INP, "@caenels-hs.proto getMinI $(PORT)")
+    field(OUT,  "@caenels-hs.proto setCurrent($(P)$(R)) $(PORT)")
+    field(PREC, "5")
+
 }
 
-record (ai, "$(P)$(R)LimitMaxI")
+record(bo, "$(P)$(R)StatusReset")
 {
-    field(DESC, "High limit of current")
+    field(DESC, "Reset status register/clear faults")
     field(DTYP, "stream")
-    field(EGU,  "A")
-    field(FLNK, "$(P)$(R)LimitMinV_")
-    field(INP, "@caenels-hs.proto getMaxI $(PORT)")
+    field(OUT,  "@caenels-hs.proto resetStatus $(PORT)")
 }
 
-record (calcout, "$(P)$(R)LimitMinV_")
+record(bo, "$(P)$(R)RampEnable")
 {
-    field(DESC, "Low limit for Voltage")
-    field(INPA, "$(P)$(R)LimitMinV")
-    field(CALC,  "A")
-    field(OUT,  "$(P)$(R)Voltage.LOPR")
-    field(FLNK, "$(P)$(R)LimitMinVOutput_")
-}
-
-record (calcout, "$(P)$(R)LimitMinVOutput_")
-{
-    field(DESC, "Low limit for output Voltage")
-    field(INPA, "$(P)$(R)LimitMinV")
-    field(CALC,  "A")
-    field(OUT,  "$(P)$(R)OutputVoltage.LOPR")
-    field(FLNK, "$(P)$(R)LimitMaxV_")
-}
-
-record (calcout, "$(P)$(R)LimitMaxV_")
-{
-    field(DESC, "High limit for Voltage")
-    field(INPA, "$(P)$(R)LimitMaxV")
-    field(CALC,  "A")
-    field(OUT,  "$(P)$(R)Voltage.HOPR")
-    field(FLNK, "$(P)$(R)LimitMaxVOutput_")
-}
-
-record (calcout, "$(P)$(R)LimitMaxVOutput_")
-{
-    field(DESC, "High limit for output Voltage")
-    field(INPA, "$(P)$(R)LimitMaxV")
-    field(CALC,  "A")
-    field(OUT,  "$(P)$(R)OutputVoltage.HOPR")
-    field(FLNK, "$(P)$(R)LimitMinI_")
-}
-
-record (calcout, "$(P)$(R)LimitMinI_")
-{
-    field(DESC, "Low limit for Current")
-    field(INPA, "$(P)$(R)LimitMinI")
-    field(CALC,  "A")
-    field(OUT,  "$(P)$(R)Current.LOPR")
-    field(FLNK, "$(P)$(R)LimitMinIOutput_")
-}
-
-record (calcout, "$(P)$(R)LimitMinIOutput_")
-{
-    field(DESC, "Low limit for output Current")
-    field(INPA, "$(P)$(R)LimitMinI")
-    field(CALC,  "A")
-    field(OUT,  "$(P)$(R)OutputCurrent.LOPR")
-    field(FLNK, "$(P)$(R)LimitMaxI_")
-}
-
-record (calcout, "$(P)$(R)LimitMaxI_")
-{
-    field(DESC, "High limit for Current")
-    field(INPA, "$(P)$(R)LimitMaxI")
-    field(CALC,  "A")
-    field(OUT,  "$(P)$(R)Current.HOPR")
-    field(FLNK, "$(P)$(R)LimitMaxIOutput_")
-}
-
-record (calcout, "$(P)$(R)LimitMaxIOutput_")
-{
-    field(DESC, "High limit for output Current")
-    field(INPA, "$(P)$(R)LimitMaxI")
-    field(CALC,  "A")
-    field(OUT,  "$(P)$(R)OutputCurrent.HOPR")
-    field(FLNK, "$(P)$(R)Model")
-}
-
-record (stringin, "$(P)$(R)Model")
-{
-    field(DESC, "Model")
-    field(DTYP, "stream")
-    field(INP,  "@caenels-hs.proto getModel $(PORT)")
-    field(FLNK, "$(P)$(R)Version")
-}
-
-record (stringin, "$(P)$(R)Version")
-{
-    field(DESC, "Version")
-    field(DTYP, "stream")
-    field(INP,  "@caenels-hs.proto getVersion $(PORT)")
-    field(FLNK, "$(P)$(R)_EnableInit")
-}
-
-record(mbbiDirect, "$(P)$(R)_EnableInit")
-{
-    field(DESC, "Initialization for Enable")
-    field(DTYP, "stream")
+    field(DESC, "Enables/disables ramping to setpoint")
+    field(ZNAM, "Off")
+    field(ONAM, "On")
+    field(DOL,  "0")
     field(PINI, "YES")
-    field(INP,  "@caenels-hs.proto getStatusLSB $(PORT)")
-    field(FLNK, "$(P)$(R)_EnableInitCalc")
 }
 
-record(calcout, "$(P)$(R)_EnableInitCalc")
+record(bo, "$(P)$(R)BulkEnable")
 {
-    field(DESC, "Initialization for Enable")
-    field(INPA, "$(P)$(R)StatusLSB")
-    field(CALC, "A & 0x1")
-    field(OUT,  "$(P)$(R)Enable.VAL")
+    field(DESC, "Turn Bulk off/on")
+    field(DTYP, "stream")
+    field(OUT,  "@caenels-hs.proto setBulkEnable $(PORT)")
+    field(ZNAM, "Off")
+    field(ONAM, "On")
+    # the field gets initialized from status, clear UDF
+    field(STAT, "NO_ALARM")
+    field(SEVR, "NO_ALARM")
 }
 
 record(bo, "$(P)$(R)Enable")
@@ -281,3 +165,56 @@ record(bo, "$(P)$(R)Enable")
     field(STAT, "NO_ALARM")
     field(SEVR, "NO_ALARM")
 }
+#### CALC
+
+record (calcout, "$(P)$(R)LimitMinI_")
+{
+    field(DESC, "Low limit for Current")
+    field(INPA, "$(P)$(R)Range")
+    field(CALC,  "-ABS(A)")
+    field(OUT,  "$(P)$(R)Current.LOPR")
+}
+record (calcout, "$(P)$(R)LimitMinOutputI_")
+{
+    field(DESC, "Low limit for Current")
+    field(INPA, "$(P)$(R)Range")
+    field(CALC,  "-ABS(A)")
+    field(OUT,  "$(P)$(R)OutputCurrent.LOPR")
+}
+
+record (calcout, "$(P)$(R)LimitMaxI_")
+{
+    field(DESC, "High limit for Current")
+    field(INPA, "$(P)$(R)Range")
+    field(CALC,  "ABS(A)")
+    field(OUT,  "$(P)$(R)Current.HOPR")
+}
+
+record (calcout, "$(P)$(R)LimitMaxOutputCurrent_")
+{
+    field(DESC, "High limit for OutputCurrent")
+    field(INPA, "$(P)$(R)Range")
+    field(CALC,  "ABS(A)")
+    field(OUT,  "$(P)$(R)OutputCurrent.HOPR")
+}
+
+
+# record(mbbiDirect, "$(P)$(R)_EnableInit")
+# {
+#     field(DESC, "Initialization for Enable")
+#     field(DTYP, "stream")
+#     field(PINI, "YES")
+#     field(INP,  "@caenels-hs.proto getStatusLSB $(PORT)")
+#     field(FLNK, "$(P)$(R)_EnableInitCalc")
+# }
+
+# record(calcout, "$(P)$(R)_EnableInitCalc")
+# {
+#     field(DESC, "Initialization for Enable")
+#     field(INPA, "$(P)$(R)StatusLSB")
+#     field(CALC, "A & 0x1")
+#     field(OUT,  "$(P)$(R)Enable.VAL")
+# }
+
+
+

@@ -1,4 +1,4 @@
-#!../../bin/linux-x86_64/CaenelsFastPS
+#!../../bin/linux-x86_64/CaenelsPS
 
 < envPaths
 
@@ -10,8 +10,8 @@ epicsEnvSet("R","PLXVCR02:")
 cd "${TOP}"
 
 ## Register all support components
-dbLoadDatabase("dbd/CaenelsFastPS.dbd",0,0)
-CaenelsFastPS_registerRecordDeviceDriver(pdbbase)
+dbLoadDatabase("dbd/CaenelsPS.dbd",0,0)
+CaenelsPS_registerRecordDeviceDriver(pdbbase)
 
 ## Configure device
 drvAsynIPPortConfigure("L0","192.168.0.9:10001",0,0,0)

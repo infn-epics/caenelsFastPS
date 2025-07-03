@@ -1,6 +1,6 @@
 
 OutTerminator = CR;
-InTerminator = CR LF;
+InTerminator = CR;
 
 getModel {
     out "VER";
