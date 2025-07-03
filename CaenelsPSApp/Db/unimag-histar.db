@@ -118,7 +118,18 @@ record(mbbo, "$(P)$(R)state") {
     field(FRST, "INTERLOCK")
     field(FVVL, "5")
     field(FVST, "ERROR")
+    field(FLNK, "$(P)$(R)state_to_bulk_enable")
+}
+
+# Map state ON to BulkEnable, but do not update if zero
+record(calcout, "$(P)$(R)state_to_bulk_enable") {
+    field(DESC, "Write 1 to BulkEnable if state is ON")
+    field(INPA, "$(P)$(R)state")
+    field(CALC, "A=1?1:0")
+    field(OUT, "$(P)$(R)BulkEnable PP")
+    field(OOPT, "When Non-zero")
     field(FLNK, "$(P)$(R)state_to_enable")
+
 }
 
 # Map state to Enable
@@ -129,6 +140,7 @@ record(calcout, "$(P)$(R)state_to_enable") {
     field(OUT, "$(P)$(R)Enable PP")
     field(OOPT, "Every Time")
 }
+
 
 # Map state to Reset
 record(calcout, "$(P)$(R)state_to_reset") {

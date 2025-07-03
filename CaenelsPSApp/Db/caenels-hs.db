@@ -38,7 +38,7 @@ record (stringin, "$(P)$(R)Version")
     field(DESC, "Version")
     field(DTYP, "stream")
     field(INP,  "@caenels-hs.proto getVersion $(PORT)")
-    field(FLNK, "$(P)$(R)_EnableInit")
+    # field(FLNK, "$(P)$(R)_EnableInit")
 }
 
 #### Readback chain

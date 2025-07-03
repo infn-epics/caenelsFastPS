@@ -10,7 +10,7 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------------------
 # Create and install (or just install) into <top>/db
 # databases, templates, substitutions like this
-DB += fastps.db unimag-fastps.db caenels-hs.db unimag-caenels.db
+DB += fastps.db unimag-fastps.db caenels-hs.db unimag-histar.db
 
 
 #----------------------------------------------------
